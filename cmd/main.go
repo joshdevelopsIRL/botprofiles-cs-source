@@ -64,7 +64,7 @@ func main() {
     NameGen.SetConfig(*NameCFG)
     NameGen.Consume(lists...)
 
-    f, err := os.Create("botprofiles.db")
+    f, err := os.Create("botprofile.db")
     if err != nil {
         panic(err)
     }
