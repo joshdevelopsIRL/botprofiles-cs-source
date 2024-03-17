@@ -56,7 +56,7 @@ func main() {
     NameCFG.MaxWordsInName = 7
     NameCFG.MaxNameLength = 24
 
-    lists, err := namegen.LoadMainListCSV("../pkg/namegen/mainlists.csv")
+    lists, err := namegen.LoadMainListCSV("../mainlists.csv")
     if err != nil {
         panic(err)
     }

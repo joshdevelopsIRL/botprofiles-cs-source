@@ -59,6 +59,9 @@ func (r RNG) RandChoice(choices []string) string {
 }
 
 func (r RNG) Shuffle(list []string) {
+    if len(list) < 3 {
+        return
+    }
     r.r.Shuffle(len(list), func(i, j int) {
         list[i], list[j] = list[j], list[i]
     })

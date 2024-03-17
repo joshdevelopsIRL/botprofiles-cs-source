@@ -101,10 +101,13 @@ func (g *Generator) getRandList(list ListType) []string {
 
         switch list {
         case Words:
+            g.r.Shuffle(g.wordList)
             w = g.r.RandChoice(g.wordList)
         case Nouns:
+            g.r.Shuffle(g.nounList)
             w = g.r.RandChoice(g.nounList)
         case Adjectives:
+            g.r.Shuffle(g.adjectiveList)
             w = g.r.RandChoice(g.adjectiveList)
         default:
             w = "NIL" + g.r.RandChoice(NUMBERS)
@@ -134,6 +137,7 @@ func (g *Generator) Generate() string {
 
     clan := ""
     if len(g.clanList) > 0 {
+        g.r.Shuffle(g.clanList)
         clan = g.r.RandChoice(g.clanList)
     }
 

@@ -105,7 +105,9 @@ func LoadMainListCSV(fname string) ([]List, error) {
             if len(row) > index {
                 for _, list := range lists {
                     if list.ListType == listType {
-                        list.Items = append(list.Items, row[index])
+                        if len(row[index]) > 0 {
+                            list.Items = append(list.Items, row[index])
+                        }
                     }
                 }
             }
