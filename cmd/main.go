@@ -1,40 +1,98 @@
 package main
 
 import (
+	"os"
+
 	"github.com/joshdevelopsIRL/botprofiles-cs-source/pkg/bots"
 	"github.com/joshdevelopsIRL/botprofiles-cs-source/pkg/namegen"
 	"github.com/joshdevelopsIRL/botprofiles-cs-source/pkg/rng"
 )
 
+var NameCFG = namegen.GetDefaultConfig()
+var NameGen = namegen.New()
+var RNG = rng.New()
+
+const BASE_POOL_SIZE = 12
+
+var UsedNames = make([]string, 0)
+
+func isUsed(name string) bool {
+    for i := range UsedNames {
+        if name == UsedNames[i] {
+            return true
+        }
+    }
+    return false
+}
+
+func GenerateRandomName() string {
+    name := NameGen.Generate()
+
+    if isUsed(name) {
+        return GenerateRandomName()
+    }
+
+    UsedNames = append(UsedNames, name)
+    return name
+}
+
+func RandomizeClans(diff int) {
+    useClans := false
+
+    if diff > 1 {
+        useClans = RNG.RandBool(BASE_POOL_SIZE/4)
+    } else {
+        useClans = RNG.RandBool(BASE_POOL_SIZE)
+    }
+
+    NameCFG.UseClans = useClans
+
+    NameGen.SetConfig(*NameCFG)
+}
+
 func main() {
-    lists, err := namegen.LoadMainListCSV("mainlists.csv")
+    NameCFG.MaxListLength = 30
+    NameCFG.RandPoolSize = BASE_POOL_SIZE
+    NameCFG.MaxWordsInName = 7
+    NameCFG.MaxNameLength = 24
+
+    lists, err := namegen.LoadMainListCSV("../pkg/namegen/mainlists.csv")
     if err != nil {
         panic(err)
     }
 
-    r := rng.New()
+    NameGen.SetConfig(*NameCFG)
+    NameGen.Consume(lists...)
 
-    nameCFG := namegen.GetDefaultConfig()
-    nameCFG.MaxListLength = 30
-    nameCFG.RandPoolSize = 10
-    nameCFG.MaxWordsInName = 7
-    nameCFG.MaxNameLength = 24
+    f, err := os.Create("botprofiles.db")
+    if err != nil {
+        panic(err)
+    }
+    defer f.Close()
 
-    nameMaker := namegen.New()
-    nameMaker.SetConfig(*nameCFG)
-    nameMaker.Consume(lists...)
-
-    pool := nameCFG.RandPoolSize
+    f.WriteString(bots.GenerateDefaultTemplate())
+    f.WriteString(bots.GenerateDifficultyTemplates())
+    f.WriteString(bots.GenerateWeaponTemplates())
+    
+    generatedAmount := 15
 
     for diff := range bots.DefaultConfigs {
-        if diff.Int() > 1 {
-            pool = pool / 2
-        } else {
-            pool = nameCFG.RandPoolSize
-        }
-
-
         for weapon := range bots.WeaponAffinities {
+            RandomizeClans(diff.Int())
+
+            if weapon == bots.Shotguns ||
+               weapon == bots.SMGs ||
+               weapon == bots.Scoped {
+                generatedAmount = 5
+            } else {
+                generatedAmount = 15
+            }
+
+            for range generatedAmount {
+                b := bots.NewProfile(GenerateRandomName(), weapon, diff)
+                b.Generate()
+                f.WriteString(b.Template())
+            }
         }
     }
 
