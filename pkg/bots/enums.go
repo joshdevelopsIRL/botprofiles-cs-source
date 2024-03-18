@@ -30,13 +30,13 @@ func (d Difficulty) Int() int {
 func (d Difficulty) TemplateName() string {
     switch d {
     case Easy:
-        return "Simple"
+        return "EasyMode"
     case Normal:
-        return "Regular"
+        return "NormalMode"
     case Hard:
-        return "Difficult"
+        return "HardMode"
     case Expert:
-        return "Broken"
+        return "ExpertMode"
     }
     return ""
 }
