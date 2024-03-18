@@ -93,6 +93,13 @@ func (g *Generator) SetConfig(config Config) {
     g.config = config
 }
 
+func (g *Generator) ShuffleLists() {
+    g.r.Shuffle(g.wordList)
+    g.r.Shuffle(g.nounList)
+    g.r.Shuffle(g.adjectiveList)
+    g.r.Shuffle(g.clanList)
+}
+
 func (g *Generator) getRandList(list ListType) []string {
     result := []string{}
 
@@ -101,13 +108,10 @@ func (g *Generator) getRandList(list ListType) []string {
 
         switch list {
         case Words:
-            g.r.Shuffle(g.wordList)
             w = g.r.RandChoice(g.wordList)
         case Nouns:
-            g.r.Shuffle(g.nounList)
             w = g.r.RandChoice(g.nounList)
         case Adjectives:
-            g.r.Shuffle(g.adjectiveList)
             w = g.r.RandChoice(g.adjectiveList)
         default:
             w = "NIL" + g.r.RandChoice(NUMBERS)
@@ -133,6 +137,8 @@ func (g *Generator) getRandList(list ListType) []string {
 }
 
 func (g *Generator) Generate() string {
+    g.ShuffleLists()
+
     wordPool := []string{}
 
     clan := ""
@@ -159,6 +165,7 @@ func (g *Generator) Generate() string {
     maxWords := g.r.RandInt(1, g.config.MaxWordsInName)
     baseName := []string{}
 
+    g.r.Shuffle(wordPool)
     for range maxWords {
         baseName = append(baseName, g.r.RandChoice(wordPool))
     }
