@@ -181,5 +181,5 @@ func (g *Generator) Generate() string {
         name = name[0:g.config.MaxNameLength]
     }
 
-    return clan + name
+    return strings.TrimSpace(clan + name)
 }
