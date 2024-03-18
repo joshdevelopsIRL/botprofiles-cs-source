@@ -42,7 +42,7 @@ func RandomizeClans(diff int) {
     if diff > 1 {
         useClans = RNG.RandBool(BASE_POOL_SIZE/4)
     } else {
-        useClans = RNG.RandBool(BASE_POOL_SIZE)
+        useClans = RNG.RandBool(BASE_POOL_SIZE-2)
     }
 
     NameCFG.UseClans = useClans
@@ -51,10 +51,10 @@ func RandomizeClans(diff int) {
 }
 
 func main() {
-    NameCFG.MaxListLength = 30
+    NameCFG.MaxListLength = 50
     NameCFG.RandPoolSize = BASE_POOL_SIZE
-    NameCFG.MaxWordsInName = 7
-    NameCFG.MaxNameLength = 24
+    NameCFG.MaxWordsInName = 5
+    NameCFG.MaxNameLength = 18
 
     lists, err := namegen.LoadMainListCSV("../mainlists.csv")
     if err != nil {
@@ -64,7 +64,7 @@ func main() {
     NameGen.SetConfig(*NameCFG)
     NameGen.Consume(lists...)
 
-    f, err := os.Create("botprofile.db")
+    f, err := os.Create("../botprofile.db")
     if err != nil {
         panic(err)
     }
@@ -78,17 +78,21 @@ func main() {
 
     for diff := range bots.DefaultConfigs {
         for weapon := range bots.WeaponAffinities {
-            RandomizeClans(diff.Int())
 
             if weapon == bots.Shotguns ||
-               weapon == bots.SMGs ||
-               weapon == bots.Scoped {
+               weapon == bots.SMGs { 
                 generatedAmount = 5
-            } else {
+            } else if weapon == bots.Scoped ||
+                      weapon == bots.Autos {
+                generatedAmount = 10
+            } else if weapon == bots.Snipers {
                 generatedAmount = 15
+            } else {
+                generatedAmount = 25
             }
 
             for range generatedAmount {
+                RandomizeClans(diff.Int())
                 b := bots.NewProfile(GenerateRandomName(), weapon, diff)
                 b.Generate()
                 f.WriteString(b.Template())
