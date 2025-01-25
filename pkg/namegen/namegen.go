@@ -23,7 +23,6 @@ type Config struct {
 
 func GetDefaultConfig() *Config {
 	return &Config{
-		MaxNameLength:  40,
 		UseWords:       true,
 		UseNumbers:     true,
 		UseNouns:       true,
@@ -31,6 +30,7 @@ func GetDefaultConfig() *Config {
 		UseClans:       false,
 		UseUppercase:   true,
 		UseLowercase:   true,
+		MaxNameLength:  40,
 		MaxListLength:  10,
 		RandPoolSize:   20,
 		MaxWordsInName: 3,
@@ -38,7 +38,6 @@ func GetDefaultConfig() *Config {
 }
 
 var DefaultConfig = Config{
-	MaxNameLength:  40,
 	UseWords:       true,
 	UseNumbers:     true,
 	UseNouns:       true,
@@ -46,6 +45,7 @@ var DefaultConfig = Config{
 	UseClans:       false,
 	UseUppercase:   true,
 	UseLowercase:   true,
+	MaxNameLength:  40,
 	MaxListLength:  10,
 	RandPoolSize:   20,
 	MaxWordsInName: 3,

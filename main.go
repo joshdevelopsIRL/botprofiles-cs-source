@@ -8,11 +8,18 @@ import (
 	"github.com/joshdevelopsIRL/botprofiles-cs-source/pkg/rng"
 )
 
+const (
+	MAIN_APP_CONFIG = "AppConfig.json"
+	MAIN_CSV_LIST   = "mainlists.csv"
+	OUTPUT_DB       = "botprofile.db"
+	BASE_POOL_SIZE  = 12
+	MAX_NAME_LENGTH = 60
+)
+
+var MainConfig = LoadConfig("./" + MAIN_APP_CONFIG)
 var NameCFG = namegen.GetDefaultConfig()
 var NameGen = namegen.New()
 var RNG = rng.New()
-
-const BASE_POOL_SIZE = 12
 
 var UsedNames = make([]string, 0)
 
@@ -39,32 +46,40 @@ func GenerateRandomName() string {
 func RandomizeClans(diff int) {
 	useClans := false
 
-	if diff > 1 {
-		useClans = RNG.RandBool(BASE_POOL_SIZE / 4)
-	} else {
-		useClans = RNG.RandBool(BASE_POOL_SIZE - 2)
+	if MainConfig.UseClans {
+		if diff > 1 {
+			useClans = RNG.RandBool(NameCFG.RandPoolSize / 4)
+		} else {
+			useClans = RNG.RandBool(NameCFG.RandPoolSize - 2)
+		}
+
 	}
 
 	NameCFG.UseClans = useClans
-
 	NameGen.SetConfig(*NameCFG)
 }
 
 func main() {
-	NameCFG.MaxListLength = 50
-	NameCFG.RandPoolSize = BASE_POOL_SIZE
-	NameCFG.MaxWordsInName = 5
-	NameCFG.MaxNameLength = 18
+	NameCFG.UseWords = MainConfig.UseWords
+	NameCFG.UseNumbers = MainConfig.UseNumbers
+	NameCFG.UseNouns = MainConfig.UseNouns
+	NameCFG.UseAdjectives = MainConfig.UseAdjectives
+	NameCFG.UseClans = MainConfig.UseClans
+	NameCFG.UseUppercase = MainConfig.UseUppercase
+	NameCFG.UseLowercase = MainConfig.UseLowercase
+	NameCFG.MaxNameLength = MainConfig.MaxNameLength
+	NameCFG.MaxListLength = MainConfig.MaxListLength
+	NameCFG.RandPoolSize = MainConfig.RandPoolSize
+	NameCFG.MaxWordsInName = MainConfig.MaxWordsInName
 
-	lists, err := namegen.LoadMainListCSV("../mainlists.csv")
+	lists, err := namegen.LoadMainListCSV(MainConfig.CSVNamelistPath)
 	if err != nil {
 		panic(err)
 	}
-
 	NameGen.SetConfig(*NameCFG)
 	NameGen.Consume(lists...)
 
-	f, err := os.Create("./botprofile.db")
+	f, err := os.Create(MainConfig.DBOutputPath)
 	if err != nil {
 		panic(err)
 	}
@@ -74,21 +89,26 @@ func main() {
 	f.WriteString(bots.GenerateDifficultyTemplates())
 	f.WriteString(bots.GenerateWeaponTemplates())
 
-	generatedAmount := 15
+	generatedAmount := 5
 
 	for diff := range bots.DefaultConfigs {
 		for weapon := range bots.WeaponAffinities {
 
-			if weapon == bots.Shotguns ||
-				weapon == bots.SMGs {
+			switch weapon {
+			case bots.Shotguns:
+				generatedAmount = MainConfig.MaxShotguns
+			case bots.SMGs:
+				generatedAmount = MainConfig.MaxSMGs
+			case bots.Scoped:
+				generatedAmount = MainConfig.MaxScoped
+			case bots.Autos:
+				generatedAmount = MainConfig.MaxAutos
+			case bots.Snipers:
+				generatedAmount = MainConfig.MaxSnipers
+			case bots.Rifles:
+				generatedAmount = MainConfig.MaxRifles
+			default:
 				generatedAmount = 5
-			} else if weapon == bots.Scoped ||
-				weapon == bots.Autos {
-				generatedAmount = 10
-			} else if weapon == bots.Snipers {
-				generatedAmount = 15
-			} else {
-				generatedAmount = 25
 			}
 
 			for range generatedAmount {

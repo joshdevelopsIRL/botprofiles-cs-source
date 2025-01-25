@@ -1,0 +1,21 @@
+{
+  "csv_namelist_path": "./mainlists.csv",
+  "db_output_path": "./release/botprofile.db",
+  "use_words": true,
+  "use_numbers": true,
+  "use_nouns": true,
+  "use_adjectives": true,
+  "use_clans": true,
+  "use_uppercase": true,
+  "use_lowercase": true,
+  "max_name_length": 43,
+  "max_list_length": 30,
+  "max_words_in_name": 3,
+  "rand_pool_size": 40,
+  "max_shotguns": 1,
+  "max_smgs": 2,
+  "max_scoped": 5,
+  "max_autos": 3,
+  "max_snipers": 7,
+  "max_rifles": 13
+}
