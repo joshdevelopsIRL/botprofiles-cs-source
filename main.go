@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strings"
 
 	"github.com/joshdevelopsIRL/botprofiles-cs-source/pkg/bots"
 	"github.com/joshdevelopsIRL/botprofiles-cs-source/pkg/namegen"
@@ -14,6 +15,7 @@ const (
 	OUTPUT_DB       = "botprofile.db"
 	BASE_POOL_SIZE  = 12
 	MAX_NAME_LENGTH = 60
+	VERSION         = "1.0.1"
 )
 
 var MainConfig = LoadConfig("./" + MAIN_APP_CONFIG)
@@ -85,9 +87,11 @@ func main() {
 	}
 	defer f.Close()
 
-	f.WriteString(bots.GenerateDefaultTemplate())
+	f.WriteString(bots.GenerateDefaultTemplate(VERSION))
 	f.WriteString(bots.GenerateDifficultyTemplates())
 	f.WriteString(bots.GenerateWeaponTemplates())
+
+	tmps := make([]string, 0)
 
 	generatedAmount := 5
 
@@ -115,9 +119,11 @@ func main() {
 				RandomizeClans(diff.Int())
 				b := bots.NewProfile(GenerateRandomName(), weapon, diff)
 				b.Generate()
-				f.WriteString(b.Template())
+				tmps = append(tmps, b.Template())
 			}
 		}
 	}
 
+	RNG.Shuffle(tmps)
+	f.WriteString(strings.Join(tmps, "\n"))
 }
