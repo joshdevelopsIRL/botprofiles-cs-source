@@ -1,7 +1,10 @@
 # CS:Source - Bot Profile Generator
 *(w/ JSON config + CSV data values)*
 
+![cs:source custom bots](./cs-source-dynamic-bots-office-29-1.png)
+
 ## How To Add The Botprofile.db To CS:Source
+:TODO:
 
 
 ## Compilation
