@@ -45,16 +45,10 @@ func GenerateRandomName() string {
 	return name
 }
 
-func RandomizeClans(diff int) {
+func RandomizeClans(skill int) {
 	useClans := false
-
 	if MainConfig.UseClans {
-		if diff > 1 {
-			useClans = RNG.RandBool(NameCFG.RandPoolSize / 4)
-		} else {
-			useClans = RNG.RandBool(NameCFG.RandPoolSize - 2)
-		}
-
+		useClans = RNG.RandInt(0, 100) < (skill*skill)/100
 	}
 
 	NameCFG.UseClans = useClans
@@ -116,9 +110,10 @@ func main() {
 			}
 
 			for range generatedAmount {
-				RandomizeClans(diff.Int())
-				b := bots.NewProfile(GenerateRandomName(), weapon, diff)
+				b := bots.NewProfile("", weapon, diff)
 				b.Generate()
+				RandomizeClans(b.Skill)
+				b.Name = GenerateRandomName()
 				tmps = append(tmps, b.Template())
 			}
 		}
