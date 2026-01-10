@@ -15,7 +15,7 @@ const (
 	OUTPUT_DB       = "botprofile.db"
 	BASE_POOL_SIZE  = 12
 	MAX_NAME_LENGTH = 60
-	VERSION         = "1.0.1"
+	VERSION         = "1.1.0"
 )
 
 var MainConfig = LoadConfig("./" + MAIN_APP_CONFIG)
