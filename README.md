@@ -4,8 +4,11 @@
 ![cs:source custom bots](./cs-source-dynamic-bots-office-29-1.png)
 
 ## How To Add The Botprofile.db To CS:Source
-:TODO:
+Find your `steamapps` folder, then go to common, Counter-Strike Source, then in the cstrike folder, then custom, then create another folder called `cstrike` and add the `Botprofile.db` into that folder you created.
 
+On linux, it is typically: `$HOME/.steam/steam/steamapps/common/Counter-Strike Source/cstrike/custom/cstrike/`
+
+On windows, it should be (but may be different now, haven't used it in years): `C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Source\cstrike\custom\cstrike\`
 
 ## Compilation
 This assumes that you have `Go` installed on your system as well as `make`.
